@@ -1,0 +1,394 @@
+---
+title: "Linear Regression 1"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+
+```{r}
+x = c(3,4,5,6,7)
+y = c(10,9,12,15,13)
+
+plot(x,y)
+```
+```{r}
+cor(x,y)
+```
+#create a scatter plot using ggplot
+```{r}
+df = data.frame(x,y)
+df
+
+
+ggplot(df, aes(x=x, y=y)) +
+  geom_point() + 
+  geom_smooth(method='lm', se= FALSE)
+```
+```{r}
+df
+lr =lm(formula = y ~ x, data=df)
+summary(lr)
+```
+```{r}
+y = 1.2(x) + 5.8
+
+```
+```{r}
+1.2*10 + 5.8
+```
+
+```{r}
+0.6316
+sqrt(0.6316)
+```
+
+```{r}
+cor(x,y)
+```
+
+```{r}
+cor(df)
+```
+
+
+
+```{r}
+wine = read.csv("C:\\Users\\mikol\\Downloads\\wine.csv")
+wine
+```
+
+
+
+
+
+```{r}
+ggplot(wine, aes(x=Year, y=Price)) +
+  geom_point()+
+  geom_smooth(method="lm", se=F)
+wine
+
+cor(wine$Year, wine$Price)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+ggplot(wine, aes(x=WinterRain, y=Price)) +
+  geom_point()+
+  geom_smooth(method="lm", se=F)
+
+```
+
+```{r}
+ggplot(wine, aes(x=HarvestRain, y=Price)) +
+  geom_point()+
+  geom_smooth(method="lm", se=F)
+```
+
+
+
+
+
+```{r}
+ggplot(wine, aes(x=AGST, y=Price)) +
+  geom_point()+
+  geom_smooth(method="lm", se=F)
+```
+
+```{r}
+ggplot(wine, aes(x=Age, y=Price)) +
+  geom_point()+
+  geom_smooth(method="lm", se=F)
+```
+
+
+
+
+
+
+
+```{r}
+correlation_wine = cor(wine)
+
+install.packages("ggcorrplot")
+library(ggcorrplot)
+```
+
+```{r}
+ggcorrplot(correlation_wine)
+```
+```{r}
+ggcorrplot(correlation_wine, type = 'lower')
+```
+```{r}
+ggcorrplot(correlation_wine, type = 'upper', lab = TRUE)
+```
+```{r}
+model0 = lm(formula = Price ~ AGST, data= wine)
+summary(model0)
+```
+
+
+```{r}
+model1 = lm(formula = Price ~ WinterRain, data= wine)
+summary(model1)
+```
+
+```{r}
+model2 = lm(formula = Price ~ HarvestRain, data= wine)
+summary(model2)
+```
+
+
+Price = 7.7985 - 0.0049 * HarvestRain
+
+```{r}
+HarvestRain = 100
+
+7.7985 - 0.0049 * HarvestRain
+
+```
+
+```{r}
+coefficients = as.numeric(model2$coefficients)
+coefficients
+```
+
+```{r}
+Harvest = 100
+coefficients[1] + coefficients[2] * HarvestRain
+```
+
+
+```{r}
+cofficients = as.numeric(model2$coefficients)
+cofficients
+```
+```{r}
+wine$HarvestRain[1:3]
+
+pred_wine = cofficients[1] + cofficients[2]* wine$HarvestRain[1:3]
+```
+```{r}
+wine$Price[1:3] - pred_wine
+```
+
+
+
+
+
+```{r}
+wine$HarvestRain
+
+pred_wine = cofficients[1] + cofficients[2]* wine$HarvestRain
+wine$Price - pred_wine
+```
+
+residuals
+```{r}
+model2$residuals
+```
+
+
+```{r}
+df_residuals = data.frame(y = wine$Price, pred = pred_wine, residuals = model2$residuals)
+df_residuals
+```
+
+```{r}
+ggplot(df_residuals, aes(x=residuals)) + geom_density()
+```
+
+```{r}
+ggplot(df_residuals, aes(x=pred, y = residuals)) +  geom_point()
+```
+
+
+
+SSE and r^2
+Base Model
+
+```{r}
+mean_price = mean(wine$Price)
+mean_price
+```
+
+```{r}
+residuals_base_model = wine$Price - mean_price
+```
+
+```{r}
+sse_base = residuals_base_model^2 %>% sum()
+sse_base
+```
+```{r}
+sse_fit = model2$residuals^2 %>% sum()
+sse_fit
+```
+(sse_base - sse_fit) / sse_base
+R^2
+```{r}
+(sse_base - sse_fit) / sse_base
+```
+
+```{r}
+summary(model2)
+```
+
+#Multiple Linear Regression
+```{r}
+wine
+```
+
+```{r}
+model3 = lm(Price ~ HarvestRain + WinterRain + AGST + Age, data=wine)
+summary(model3)
+```
+Price = -3.42 -0.0039715*HarvestRain + 0.0010755*WinterRain + 0.6072093*AGST + 0.0239308*Age
+
+
+
+
+
+```{r}
+model4 = lm(Price ~ ., data=wine)
+summary(model4)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######
+DECISION TREES
+######
+
+
+
+
+
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(caret)
+df = read_csv("C:\\Users\\mikol\\Downloads\\auto-mpg-clean.csv")
+df
+```
+
+
+
+
+```{r}
+df = mutate(df, origin = factor(origin),
+       model_year = factor(model_year))
+df
+```
+
+
+
+
+```{r}
+df = df |> select(-car_name)
+df
+```
+```{r}
+df = df |> mutate(acc_d = factor( ifelse(acceleration >=15, "high_acc", "low_acc")))
+df
+```
+```{r}
+install.packages("caret")
+library(tidyverse)
+library(caret)
+set.seed(123)  # Set a seed for reproducibility
+idx = createDataPartition(y = df$acc_d, p = 0.8, list = FALSE)  # Stratified sampling
+
+df_train = df[idx, ]  # Training set: 80% of the data
+df_test = df[-idx, ]  # Test set: 20% of the data
+```
+
+```{r}
+install.packages("rpart")
+install.packages("rattle")
+
+library(rpart)
+library(rattle)
+```
+
+
+```{r}
+table(df_train$acc_d)
+tree1 = rpart(acc_d ~ cylinders, data=df_train)
+
+fancyRpartPlot(tree1)
+```
+
+
+```{r}
+tree2 = rpart(acc_d ~ horsepower + displacement + cylinders, data=df_train)
+fancyRpartPlot(tree2)
+```
+```{r}
+df_test |> select(horsepower, displacement,cylinders)
+#low_acc, high_acc, high_acc
+```
+
+
+
+######
+Variable Importance
+#####
+
+```{r}
+library(vip)
+```
+
+```{r}
+vip(tree2)
+```
+```{r}
+df_train
+tree3 = rpart(acc_d ~ . -acceleration, data=df_train)
+fancyRpartPlot(tree3)
+vip(tree3)
+```
+
+
+
